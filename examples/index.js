@@ -3,7 +3,7 @@ const functions = require('firebase-functions'); //include functions (functions.
 function get(req, res) {
 	
 	//Special Facebook token, read developers.facebook.com/docs/graph-api/webhooks
-    if (req.query['hub.verify_token'] === 'abc1337') {
+	if (req.query['hub.verify_token'] === 'abc1337') {
 		res.send(req.query['hub.challenge']);
     } else {
      	
