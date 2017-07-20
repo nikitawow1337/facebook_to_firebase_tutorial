@@ -7,7 +7,7 @@ function get(req, res) {
 		res.send(req.query['hub.challenge']);
     } else {
      	
-		//ody of request
+		//body of request
 		var data = req.body;
 
 	    //Make sure this is a page subscription
