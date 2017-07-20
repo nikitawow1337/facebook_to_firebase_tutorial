@@ -35,8 +35,8 @@ function get(req, res) {
 function receivedMessage(event) {
 	var timeOfMessage = event.timestamp;
 	var message = event.message;
-    var senderID = event.sender.id;
-    var recipientID = event.recipient.id;
+	var senderID = event.sender.id;
+	var recipientID = event.recipient.id;
 	
 	console.log("createdAt: ", messageDate.toUTCString()); //Timestamp
 	console.log("author: %d", senderID);
