@@ -86,7 +86,102 @@
 
 *firebase deploy --only functions:myFunction*
 
+Посмотреть список всех баз данных Firebase можно с помощью следующей команды:
+
+*firebase list*
+
+Переключиться на другую базу данных можно с помощью:
+
+*firebase use database*
+
+Вместо database необходимо использовать название вашей базы данных, вернее ее id, которое можно посмотреть с помощью предыдущей команды или на сайте.
+
 Общая структура Firebase CLI:
 
 ![Firebase structure](images/firebase_cli_structure.jpg)
 
+## Writing index.js
+
+Функции, которые мы реализуем в файле index.js будут передаваться на сервер Firebase и храниться там. 
+
+Для начала необходимо подключить библиотеку функций
+
+const functions = require('firebase-functions'); 
+
+После чего напшием функцию, которая будет получать данные (response) и запрашивать данные (request).
+
+exports.action = functions.https.onRequest((req, res) => {	
+	get(req, res);
+});
+
+Внутри вызывается функцию get (вынесена отдельно):
+
+	function get(req, res) 
+	{
+	
+		//Special Facebook token, read developers.facebook.com/docs/graph-api/webhooks
+		if (req.query['hub.verify_token'] === 'abc1337') {
+			res.send(req.query['hub.challenge']);
+		} else {
+			
+			//ody of request
+			var data = req.body;
+
+			//Make sure this is a page subscription
+			if (data.object === 'page') {
+
+				//Iterate over each entry - there may be multiple if batched
+				data.entry.forEach(function(entry) {
+					var pageID = entry.id;
+					var timeOfEvent = entry.time;
+
+						// Iterate over each messaging event
+						entry.messaging.forEach(function(event) {
+							if (event.message) {
+								receivedMessage(event);
+							} else {
+								console.log("Webhook received unknown event: ", event);
+							}
+						});
+				});
+				res.sendStatus(200);
+			}	
+		} 
+	}
+
+Если мы получили запрос от Facebook на токен и этот токен равен abc1337, то отправляем запрос 'hub.challenge'. В ином случае мы получили сообщение, которое необходимо обработать (с помощью функции receivedMessage).
+
+В конце отправляем статус 200, чтобы Facebook не отправлял нам запросы повторно.
+
+Реализуем функцию receivedMessage:
+
+	function receivedMessage(event) 
+	{
+		var timeOfMessage = event.timestamp;
+		var message = event.message;
+		var senderID = event.sender.id;
+		var recipientID = event.recipient.id;
+		
+		messageDate = new Date(timeOfMessage);
+		console.log("createdAt: ", messageDate.toUTCString());
+		console.log("author: %d", senderID);
+		console.log("received: %d", recipientID);
+	}
+
+Сообщения принимаются с помощью event, записываем в логи то, что приходит от пользователей. Сохраняем файл index.js и разворачиваем нашу базу данных с помощью firebase deploy.
+
+После успешного развертывания появляется наша функция action.
+
+![Firebase structure](images/firebase_function.jpg)
+
+Возвращаемся к создаваемому нами приложению (TestApp), куда мы хотели записать некоторые данные.
+
+* URL обратного вызова - записываем сюда адрес, который был указан на последнем изображении (вместе с action)
+* Подтвердить маркер - abc1337 (который был указан в функции get)
+* Поле подписки - выделяем messages 
+
+После этого создался Webhook, выберем страницу, с которой он будет отсылаться (Testpublicchat), попробуем что-нибудь написать в этот чат от своего имени. Смотрим в журналы функций и видим:
+
+![Firebase logs](images/functions_templates.jpg)
+
+Пришло наше сообщение.
