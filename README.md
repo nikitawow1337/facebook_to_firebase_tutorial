@@ -172,7 +172,7 @@ exports.action = functions.https.onRequest((req, res) => {
 
 После успешного развертывания появляется наша функция action.
 
-![Firebase structure](images/firebase_function.jpg)
+![Firebase structure](images/firebase_action_function.jpg)
 
 Возвращаемся к создаваемому нами приложению (TestApp), куда мы хотели записать некоторые данные.
 
