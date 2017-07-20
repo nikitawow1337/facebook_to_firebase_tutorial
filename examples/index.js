@@ -18,7 +18,7 @@ function get(req, res) {
 				var pageID = entry.id;
 				var timeOfEvent = entry.time;
 
-					// Iterate over each messaging event
+					//Iterate over each messaging event
 					entry.messaging.forEach(function(event) {
 						if (event.message) {
 							receivedMessage(event);
