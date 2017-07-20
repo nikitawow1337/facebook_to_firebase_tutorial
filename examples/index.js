@@ -5,30 +5,29 @@ function get(req, res) {
 	//Special Facebook token, read developers.facebook.com/docs/graph-api/webhooks
 	if (req.query['hub.verify_token'] === 'abc1337') {
 		res.send(req.query['hub.challenge']);
-		} else {
-     	
+	} else {
 		//body of request
 		var data = req.body;
 
-	    //Make sure this is a page subscription
-	    if (data.object === 'page') {
+		//Make sure this is a page subscription
+		if (data.object === 'page') {
 
 			//Iterate over each entry - there may be multiple if batched
 			data.entry.forEach(function(entry) {
 				var pageID = entry.id;
 				var timeOfEvent = entry.time;
 
-					//Iterate over each messaging event
-					entry.messaging.forEach(function(event) {
-						if (event.message) {
-							receivedMessage(event);
-						} else {
-							console.log("Webhook received unknown event: ", event);
-						}
-					});
+				//Iterate over each messaging event
+				entry.messaging.forEach(function(event) {
+					if (event.message) {
+						receivedMessage(event);
+					} else {
+						console.log("Webhook received unknown event: ", event);
+					}
+				});
 			});
 			res.sendStatus(200);
-	    }	
+		}	
 	} 
 }
 
