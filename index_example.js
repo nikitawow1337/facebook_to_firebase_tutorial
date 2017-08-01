@@ -1,4 +1,4 @@
-const firebase = require("firebase");
+п»їconst firebase = require("firebase");
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
@@ -115,7 +115,7 @@ function receivedMessage(event) {
 	childs = snapshot.numChildren();
 	console.log("Childs %d", childs);
 	
-	//Если нет чатов, то создание нового
+	//Р•СЃР»Рё РЅРµС‚ С‡Р°С‚РѕРІ, С‚Рѕ СЃРѕР·РґР°РЅРёРµ РЅРѕРІРѕРіРѕ
     if (snapshot.numChildren() == 0) {
 		var chatStoreRef = ref.push();
 		chatStoreRef.set({
@@ -124,12 +124,12 @@ function receivedMessage(event) {
 			"archival": "false"
 		});
 		
-	//Если есть хотя бы 1 чат	
+	//Р•СЃР»Рё РµСЃС‚СЊ С…РѕС‚СЏ Р±С‹ 1 С‡Р°С‚	
 	} else { 
 		rootRef.child("FBChat/").on("child_added", function(snapshot) {
 			console.log("Peer ", snapshot.child("peer").val(), "new sender", new_sender);
 			
-			//Если чат уже есть (проверка в цикле)
+			//Р•СЃР»Рё С‡Р°С‚ СѓР¶Рµ РµСЃС‚СЊ (РїСЂРѕРІРµСЂРєР° РІ С†РёРєР»Рµ)
 			if (snapshot.child("peer").val() == senderID) { 
 				console.log("EQUAL");
 				count = count - 1;
@@ -141,7 +141,7 @@ function receivedMessage(event) {
 			console.log("Childs: %d Count: %d", childs, count);
 			if (count == childs) {
 
-			//Если чата нет (то есть senderID был уникальным), то пушим новый FBChat 
+			//Р•СЃР»Рё С‡Р°С‚Р° РЅРµС‚ (С‚Рѕ РµСЃС‚СЊ senderID Р±С‹Р» СѓРЅРёРєР°Р»СЊРЅС‹Рј), С‚Рѕ РїСѓС€РёРј РЅРѕРІС‹Р№ FBChat 
 			var echatStoreRef = ref.push();
 				echatStoreRef.set({
 					"peer": senderID,	
@@ -157,19 +157,19 @@ function receivedMessage(event) {
 	
 	} 
 
-	//Создание FBMessage с ключом "peer" FBChat
+	//РЎРѕР·РґР°РЅРёРµ FBMessage СЃ РєР»СЋС‡РѕРј "peer" FBChat
 	rootRef.child("FBChat/").on("child_added", function(snapshot) {
 		var flag = 0;
 		var chatKey = snapshot.child("peer").val();
 		console.log("Chat key: ", chatKey);
 		
-		//Проход по всем ключам FBChat
+		//РџСЂРѕС…РѕРґ РїРѕ РІСЃРµРј РєР»СЋС‡Р°Рј FBChat
 		if (chatKey == senderID) { 
 			chatKey = snapshot.key; 
 			flag = flag + 1; 
 		}
 			
-		//Пуш сообщения в базу данных после нахождения ключа
+		//РџСѓС€ СЃРѕРѕР±С‰РµРЅРёСЏ РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… РїРѕСЃР»Рµ РЅР°С…РѕР¶РґРµРЅРёСЏ РєР»СЋС‡Р°
 		if (flag == 1) {
 			var storesRef = rootRef.child('FBMessage');
 			var newStoreRef = storesRef.push();
@@ -186,7 +186,7 @@ function receivedMessage(event) {
 	
 	
 	/*
-	//Пример отправки сообщения на Facebook (не работает с Firebase)
+	//РџСЂРёРјРµСЂ РѕС‚РїСЂР°РІРєРё СЃРѕРѕР±С‰РµРЅРёСЏ РЅР° Facebook (РЅРµ СЂР°Р±РѕС‚Р°РµС‚ СЃ Firebase)
 	login({
 	  email: "example123@yandex.ru",
 	  password: "example123456"
@@ -201,7 +201,7 @@ function receivedMessage(event) {
 	});
 	*/
 	
-	//Отправка сообщения через Firebase в чат публичной страницы на Facebook (не работает с Firebase)
+	//РћС‚РїСЂР°РІРєР° СЃРѕРѕР±С‰РµРЅРёСЏ С‡РµСЂРµР· Firebase РІ С‡Р°С‚ РїСѓР±Р»РёС‡РЅРѕР№ СЃС‚СЂР°РЅРёС†С‹ РЅР° Facebook (РЅРµ СЂР°Р±РѕС‚Р°РµС‚ СЃ Firebase)
 	/*
 	function callSendAPI(messageData) {
 		request({
